@@ -2,14 +2,19 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
+USER = 'user'
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+
+ROLE_CHOICES = [
+    (USER, USER),
+    (ADMIN, ADMIN),
+    (MODERATOR, MODERATOR),
+]
+
 
 class User(AbstractUser):
     """Класс кастомных пользователей."""
-
-    class Roles(models.TextChoices):
-        USER = 'user', 'User'
-        MODERATOR = 'moderator', 'Moderator'
-        ADMIN = 'admin', 'Admin'
 
     username = models.CharField(
         max_length=150,
@@ -45,9 +50,11 @@ class User(AbstractUser):
         blank=True
     )
     role = models.CharField(
-        max_length=10,
-        choices=Roles.choices,
-        default=Roles.USER
+        'роль',
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default=USER,
+        blank=True
     )
 
     @property
