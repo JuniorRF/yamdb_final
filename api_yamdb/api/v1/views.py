@@ -1,6 +1,6 @@
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator, get_user_model
+from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
@@ -13,14 +13,11 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.tokens import AccessToken
-from django.contrib.auth import get_user_model
+from reviews.models import Category, Genre, Review, Title
 
-from reviews.models import Category, Genre, Title
-from reviews.models import Review
 from .filters import TitlesFilter
-from .permissions import (IsAdminUserOrReadOnly, IsAdminPermission,
-                          IsAuthorAdminSuperuserOrReadOnlyPermission,
-                          )
+from .permissions import (IsAdminPermission, IsAdminUserOrReadOnly,
+                          IsAuthorAdminSuperuserOrReadOnlyPermission)
 from .serializers import (CategorySerializer, CommentSerializer,
                           CustomUserSerializer, GenreSerializer,
                           ReadTitleSerializer, ReviewSerializer,
