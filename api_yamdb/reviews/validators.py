@@ -1,10 +1,10 @@
-from django.core.exceptions import ValidationError
-from django.utils import timezone
+import datetime as dt
+from rest_framework.exceptions import ValidationError
 
 
-def validate_title_year(value):
-    if value > timezone.now().year:
-        raise ValidationError(
-            ('Год выпуска %(value)s больше текущего.'),
-            params={'value': value},
-        )
+def validate_year(value):
+    """Функция валидации поля в модели Title."""
+    current_year = dt.datetime.now().year
+    if value > current_year:
+        raise ValidationError('Неправильная дата')
+    return value
