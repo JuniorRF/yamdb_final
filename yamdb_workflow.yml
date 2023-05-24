@@ -29,6 +29,7 @@ jobs:
     name: Push to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
+    if: github.ref_name == 'master'
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -50,7 +51,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
-    environment: master < -- here
+    environment: master
     steps:
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -62,6 +63,7 @@ jobs:
           script: |
             sudo docker-compose stop
             sudo docker-compose rm web
+            sudo docker pull juniorrf/yamdb_final:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -69,6 +71,7 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+            sudo docker-compose pull juniorrf/yamdb_final
             sudo docker-compose up -d 
 
   send_message:
@@ -80,4 +83,4 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: ${{ github.workflow }} успешно выполнен!
+        message: ${{ github.actor }} выполнил push. ${{ github.workflow }} успешно выполнен!
